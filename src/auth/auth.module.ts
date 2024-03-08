@@ -2,7 +2,7 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AuthController } from './controllers/auth.controller';
 import { AuthService } from './services/auth.service';
 import { UserModule } from 'src/user/user.module';
-import { User, UserSchema } from 'src/user/schemas/user..schema';
+import { User, UserSchema } from 'src/user/schemas/user.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CheckUniqueEmailMiddleware } from './middlewares/check-unique-email.middleware';
 import { JwtModule } from '@nestjs/jwt';

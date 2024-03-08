@@ -9,7 +9,6 @@ export class CheckUniqueEmailMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
     const email = req.body.email; // Assuming email is sent in the request body
     const existingUser = await this.userService.findByEmail(email);
-
     if (existingUser) {
       return res.status(HttpStatus.CONFLICT).json({
         status: HttpStatus.CONFLICT,
