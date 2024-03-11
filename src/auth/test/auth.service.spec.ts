@@ -1,24 +1,28 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from '../services/auth.service';
 import { getModelToken } from '@nestjs/mongoose';
-import { JwtService } from '@nestjs/jwt';
-
-const mockUser = {
-  firstName: 'Pedro',
-  lastName: 'Valderrama',
-  age: 28,
-  gender: 'Male',
-  email: 'pedro@gmail.com',
-  password: 'Wtttttt1*',
-};
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { mockUser } from '../../user/test/testData';
+import { User } from 'src/user/schemas/user.schema';
+import { Model } from 'mongoose';
+import { ConfigModule } from '@nestjs/config';
 
 describe('AuthService', () => {
   let service: AuthService;
+  let model: Model<User>;
+  let jwtService: JwtService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot(),
+        JwtModule.register({
+          global: true,
+          secret: process.env.JWT_SECRET,
+          signOptions: { expiresIn: '60s' },
+        }),
+      ],
       providers: [
-        JwtService,
         AuthService,
         {
           provide: getModelToken('User'),
@@ -34,9 +38,23 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
+    model = module.get<Model<User>>(getModelToken('User'));
+    jwtService = module.get<JwtService>(JwtService);
+
+    jest.spyOn(jwtService, 'sign').mockReturnValue('mockedAccessToken');
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  it('should insert a new user', async () => {
+    jest
+      .spyOn(model, 'create')
+      .mockImplementationOnce(() =>
+        Promise.resolve({ access_token: 'mockedAccessToken' } as any),
+      );
+    const newUser = await service.create(mockUser);
+    expect(newUser).toEqual({ access_token: 'mockedAccessToken' });
   });
 });

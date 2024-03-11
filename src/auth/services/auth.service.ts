@@ -19,14 +19,11 @@ export class AuthService {
   async create(createUserDto: CreateUserDto): Promise<CreateUserResponse> {
     const salt = await bcrypt.genSalt();
     const hash = await bcrypt.hash(createUserDto.password, salt);
-    const createdUser = new this.userModel({
+    const createdUser = await this.userModel.create({
       ...createUserDto,
       password: hash,
     });
-    createdUser.save();
-    const userJson: User = createdUser.toJSON();
-    delete userJson.password;
-    const payload = userJson;
+    const payload = { user: createdUser };
     return {
       access_token: this.jwtService.sign(payload),
     };

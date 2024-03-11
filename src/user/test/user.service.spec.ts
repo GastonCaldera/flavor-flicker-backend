@@ -3,15 +3,7 @@ import { UserService } from '../services/user.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from '../schemas/user.schema';
-
-const mockUser = {
-  firstName: 'Pedro',
-  lastName: 'Valderrama',
-  age: 28,
-  gender: 'Male',
-  email: 'pedro@gmail.com',
-  password: 'Wtttttt1*',
-};
+import { mockUser } from './testData';
 
 describe('UserService', () => {
   let service: UserService;
