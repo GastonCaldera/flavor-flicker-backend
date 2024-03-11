@@ -13,7 +13,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<CreateUserResponse> {
+  async singUp(createUserDto: CreateUserDto): Promise<CreateUserResponse> {
     const salt = await bcrypt.genSalt();
     const hash = await bcrypt.hash(createUserDto.password, salt);
     const createdUser = await this.userModel.create({

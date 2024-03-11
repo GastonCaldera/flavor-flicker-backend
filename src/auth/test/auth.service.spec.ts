@@ -54,7 +54,7 @@ describe('AuthService', () => {
       .mockImplementationOnce(() =>
         Promise.resolve({ access_token: 'mockedAccessToken' } as any),
       );
-    const newUser = await service.create(mockUser);
+    const newUser = await service.singUp(mockUser);
     expect(newUser).toEqual({ access_token: 'mockedAccessToken' });
   });
 });

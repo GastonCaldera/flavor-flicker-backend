@@ -6,8 +6,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @Post('/sing-up')
-  async create(@Body() createUserDto: CreateUserDto) {
-    const response = await this.authService.create(createUserDto);
+  async singUp(@Body() createUserDto: CreateUserDto) {
+    const response = await this.authService.singUp(createUserDto);
     return {
       status: HttpStatus.CREATED,
       message: 'user created successfully',

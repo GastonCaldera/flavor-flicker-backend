@@ -26,7 +26,7 @@ describe('AuthController', () => {
         {
           provide: AuthService,
           useValue: {
-            create: jest.fn().mockResolvedValue(mockUser),
+            singUp: jest.fn().mockResolvedValue(mockUser),
           },
         },
       ],
@@ -83,9 +83,9 @@ describe('AuthController', () => {
 
     it('should create a new User', async () => {
       const createSpy = jest
-        .spyOn(service, 'create')
+        .spyOn(service, 'singUp')
         .mockResolvedValueOnce({ access_token: '1234' });
-      const response = await controller.create(mockUser);
+      const response = await controller.singUp(mockUser);
       expect(createSpy).toHaveBeenCalledWith(mockUser);
       expect({
         status: HttpStatus.CREATED,
