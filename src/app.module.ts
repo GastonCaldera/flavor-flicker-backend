@@ -7,7 +7,11 @@ import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    MongooseModule.forRoot(process.env.DATABASE_HOST),
+    MongooseModule.forRoot(
+      process.env.DATABASE_HOST
+        ? process.env.DATABASE_HOST
+        : 'mongodb://localhost:3000/mydatabase',
+    ),
     UserModule,
     AuthModule,
   ],
