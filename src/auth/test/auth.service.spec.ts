@@ -6,6 +6,8 @@ import { mockUser } from '../../user/test/testData';
 import { User } from '../../user/schemas/user.schema';
 import { Model } from 'mongoose';
 import { ConfigModule } from '@nestjs/config';
+import { UserService } from '../../user/user.service';
+import { HttpStatus } from '@nestjs/common';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -34,6 +36,12 @@ describe('AuthService', () => {
             exec: jest.fn(),
           },
         },
+        {
+          provide: UserService,
+          useValue: {
+            findByEmail: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -41,7 +49,7 @@ describe('AuthService', () => {
     model = module.get<Model<User>>(getModelToken('User'));
     jwtService = module.get<JwtService>(JwtService);
 
-    jest.spyOn(jwtService, 'sign').mockReturnValue('mockedAccessToken');
+    jest.spyOn(jwtService, 'sign').mockReturnValue('1234');
   });
 
   it('should be defined', () => {
@@ -49,12 +57,15 @@ describe('AuthService', () => {
   });
 
   it('should insert a new user', async () => {
+    const mockResponse = {
+      status: HttpStatus.CREATED,
+      message: 'user created successfully',
+      data: { access_token: '1234' },
+    };
     jest
       .spyOn(model, 'create')
-      .mockImplementationOnce(() =>
-        Promise.resolve({ access_token: 'mockedAccessToken' } as any),
-      );
+      .mockImplementationOnce(() => Promise.resolve(mockResponse as any));
     const newUser = await service.signUp(mockUser);
-    expect(newUser).toEqual({ access_token: 'mockedAccessToken' });
+    expect(newUser).toEqual(mockResponse);
   });
 });

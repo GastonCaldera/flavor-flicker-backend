@@ -26,7 +26,7 @@ describe('AuthController', () => {
         {
           provide: AuthService,
           useValue: {
-            singUp: jest.fn().mockResolvedValue(mockUser),
+            signUp: jest.fn().mockResolvedValue(mockUser),
           },
         },
       ],
@@ -94,7 +94,7 @@ describe('AuthController', () => {
 
       const response = await controller.signUp(mockUser);
       expect(createSpy).toHaveBeenCalledWith(mockUser);
-      expect(createSpy).toEqual(response);
+      expect(mockResponse).toEqual(response);
     });
   });
 });
