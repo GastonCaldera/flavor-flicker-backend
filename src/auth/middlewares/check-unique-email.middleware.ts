@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware, HttpStatus } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { UserService } from '../../user/services/user.service';
+import { UserService } from '../../user/user.service';
 
 @Injectable()
 export class CheckUniqueEmailMiddleware implements NestMiddleware {

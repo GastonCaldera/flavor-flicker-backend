@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthService } from '../services/auth.service';
-import { AuthController } from '../controllers/auth.controller';
+import { AuthService } from '../auth.service';
+import { AuthController } from '../auth.controller';
 import { mockUser } from '../../user/test/testData';
 import { HttpStatus } from '@nestjs/common';
 import { CheckUniqueEmailMiddleware } from '../middlewares/check-unique-email.middleware';
-import { UserService } from '../../user/services/user.service';
+import { UserService } from '../../user/user.service';
 import { Request, Response } from 'express';
 
 describe('AuthController', () => {

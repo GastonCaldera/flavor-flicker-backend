@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../auth.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { mockUser } from '../../user/test/testData';
