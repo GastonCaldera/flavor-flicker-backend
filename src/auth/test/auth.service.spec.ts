@@ -3,7 +3,7 @@ import { AuthService } from '../auth.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { mockUser } from '../../user/test/testData';
-import { User } from 'src/user/schemas/user.schema';
+import { User } from '../../user/schemas/user.schema';
 import { Model } from 'mongoose';
 import { ConfigModule } from '@nestjs/config';
 
@@ -54,7 +54,7 @@ describe('AuthService', () => {
       .mockImplementationOnce(() =>
         Promise.resolve({ access_token: 'mockedAccessToken' } as any),
       );
-    const newUser = await service.singUp(mockUser);
+    const newUser = await service.signUp(mockUser);
     expect(newUser).toEqual({ access_token: 'mockedAccessToken' });
   });
 });

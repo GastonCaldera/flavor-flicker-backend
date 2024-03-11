@@ -5,7 +5,7 @@ import {
   IsStrongPassword,
 } from 'class-validator';
 
-export class CreateUserDto {
+export class SignUpUserDto {
   @IsNotEmpty()
   firstName: string;
 
@@ -26,8 +26,4 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsStrongPassword()
   password: string;
-}
-
-export class CreateUserResponse {
-  access_token: string;
 }

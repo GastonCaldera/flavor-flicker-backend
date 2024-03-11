@@ -82,16 +82,19 @@ describe('AuthController', () => {
     });
 
     it('should create a new User', async () => {
-      const createSpy = jest
-        .spyOn(service, 'singUp')
-        .mockResolvedValueOnce({ access_token: '1234' });
-      const response = await controller.singUp(mockUser);
-      expect(createSpy).toHaveBeenCalledWith(mockUser);
-      expect({
+      const mockResponse = {
         status: HttpStatus.CREATED,
         message: 'user created successfully',
         data: { access_token: '1234' },
-      }).toEqual(response);
+      };
+
+      const createSpy = jest
+        .spyOn(service, 'signUp')
+        .mockResolvedValueOnce(mockResponse);
+
+      const response = await controller.signUp(mockUser);
+      expect(createSpy).toHaveBeenCalledWith(mockUser);
+      expect(createSpy).toEqual(response);
     });
   });
 });
