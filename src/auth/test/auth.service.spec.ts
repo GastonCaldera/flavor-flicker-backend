@@ -64,7 +64,7 @@ describe('AuthService', () => {
     };
     jest
       .spyOn(model, 'create')
-      .mockImplementationOnce(() => Promise.resolve(mockResponse as any));
+      .mockImplementationOnce(() => Promise.resolve(mockUser as any));
     const newUser = await service.signUp(mockUser);
     expect(newUser).toEqual(mockResponse);
   });
