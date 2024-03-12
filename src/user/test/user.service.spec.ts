@@ -28,6 +28,10 @@ describe('UserService', () => {
     model = module.get<Model<User>>(getModelToken('User'));
   });
 
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   it('should be defined', () => {
     expect(service).toBeDefined();
   });

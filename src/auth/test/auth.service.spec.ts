@@ -7,11 +7,18 @@ import { User } from '../../user/schemas/user.schema';
 import { Model } from 'mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { UserService } from '../../user/user.service';
-import { HttpStatus } from '@nestjs/common';
+import {
+  mockResponseCreated,
+  mockResponseOk,
+  mockSignIn,
+  mockResponseUnauthorized,
+} from './testData';
+import * as bcrypt from 'bcrypt';
 
 describe('AuthService', () => {
   let service: AuthService;
   let model: Model<User>;
+  let userService: UserService;
   let jwtService: JwtService;
 
   beforeEach(async () => {
@@ -47,25 +54,71 @@ describe('AuthService', () => {
 
     service = module.get<AuthService>(AuthService);
     model = module.get<Model<User>>(getModelToken('User'));
+    userService = module.get<UserService>(UserService);
     jwtService = module.get<JwtService>(JwtService);
 
     jest.spyOn(jwtService, 'sign').mockReturnValue('1234');
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  it('should insert a new user', async () => {
-    const mockResponse = {
-      status: HttpStatus.CREATED,
-      message: 'user created successfully',
-      data: { access_token: '1234' },
-    };
-    jest
-      .spyOn(model, 'create')
-      .mockImplementationOnce(() => Promise.resolve(mockUser as any));
-    const newUser = await service.signUp(mockUser);
-    expect(newUser).toEqual(mockResponse);
+  describe('signUp()', () => {
+    it('should insert a new user', async () => {
+      const createSpy = jest
+        .spyOn(model, 'create')
+        .mockImplementationOnce(() => Promise.resolve(mockUser as any));
+      jest
+        .spyOn(bcrypt, 'hash')
+        .mockImplementationOnce(() => Promise.resolve(mockUser.password));
+      const response = await service.signUp(mockUser);
+      expect(createSpy).toHaveBeenCalledWith(mockUser);
+      expect(response).toEqual(mockResponseCreated);
+    });
+  });
+
+  describe('signIn()', () => {
+    it('should signIn', async () => {
+      const findByEmailSpy = jest
+        .spyOn(userService, 'findByEmail')
+        .mockResolvedValueOnce(mockUser);
+      jest
+        .spyOn(bcrypt, 'compare')
+        .mockImplementationOnce(() => Promise.resolve(true));
+      const response = await service.signIn(mockSignIn);
+      expect(findByEmailSpy).toHaveBeenCalledWith(mockSignIn.email);
+      expect(response).toEqual(mockResponseOk);
+    });
+
+    it('should not signIn, email invalid', async () => {
+      const findByEmailSpy = jest
+        .spyOn(userService, 'findByEmail')
+        .mockResolvedValueOnce(null);
+      jest
+        .spyOn(bcrypt, 'compare')
+        .mockImplementationOnce(() => Promise.resolve(true));
+
+      const response = await service.signIn(mockSignIn);
+      expect(findByEmailSpy).toHaveBeenCalledWith(mockSignIn.email);
+      expect(response).toEqual(mockResponseUnauthorized);
+    });
+
+    it('should not signIn, password invalid', async () => {
+      const findByEmailSpy = jest
+        .spyOn(userService, 'findByEmail')
+        .mockResolvedValueOnce(mockUser);
+      jest
+        .spyOn(bcrypt, 'compare')
+        .mockImplementationOnce(() => Promise.resolve(false));
+
+      const response = await service.signIn(mockSignIn);
+      expect(findByEmailSpy).toHaveBeenCalledWith(mockSignIn.email);
+      expect(response).toEqual(mockResponseUnauthorized);
+    });
   });
 });

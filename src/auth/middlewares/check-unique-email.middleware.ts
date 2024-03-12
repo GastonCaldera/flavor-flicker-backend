@@ -13,7 +13,9 @@ export class CheckUniqueEmailMiddleware implements NestMiddleware {
       return res.status(HttpStatus.CONFLICT).json({
         status: HttpStatus.CONFLICT,
         message: 'Email address already in use',
-        data: '',
+        data: {
+          access_token: '',
+        },
       });
     }
     next();

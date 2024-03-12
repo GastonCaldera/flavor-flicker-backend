@@ -6,6 +6,12 @@ import { HttpStatus } from '@nestjs/common';
 import { CheckUniqueEmailMiddleware } from '../middlewares/check-unique-email.middleware';
 import { UserService } from '../../user/user.service';
 import { Request, Response } from 'express';
+import {
+  mockResponseCreated,
+  mockResponseOk,
+  mockSignIn,
+  mockResponseConflict,
+} from './testData';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -26,7 +32,8 @@ describe('AuthController', () => {
         {
           provide: AuthService,
           useValue: {
-            signUp: jest.fn().mockResolvedValue(mockUser),
+            signUp: jest.fn().mockResolvedValue(mockResponseCreated),
+            signIn: jest.fn().mockResolvedValue(mockResponseOk),
           },
         },
       ],
@@ -40,12 +47,16 @@ describe('AuthController', () => {
     );
   });
 
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   it('should be defined', () => {
     expect(controller).toBeDefined();
     expect(middleware).toBeDefined();
   });
 
-  describe('create()', () => {
+  describe('signUp()', () => {
     it('should call next() if email is unique', async () => {
       const req: Request = { body: { email: mockUser.email } } as Request;
       const res: Response = {} as Response;
@@ -73,28 +84,26 @@ describe('AuthController', () => {
       await middleware.use(req, res, nextFn);
 
       expect(res.status).toHaveBeenCalledWith(HttpStatus.CONFLICT);
-      expect(res.json).toHaveBeenCalledWith({
-        status: HttpStatus.CONFLICT,
-        message: 'Email address already in use',
-        data: '',
-      });
+      expect(res.json).toHaveBeenCalledWith(mockResponseConflict);
       expect(nextFn).not.toHaveBeenCalled();
     });
 
     it('should create a new User', async () => {
-      const mockResponse = {
-        status: HttpStatus.CREATED,
-        message: 'user created successfully',
-        data: { access_token: '1234' },
-      };
-
-      const createSpy = jest
-        .spyOn(service, 'signUp')
-        .mockResolvedValueOnce(mockResponse);
+      const createSpy = jest.spyOn(service, 'signUp');
 
       const response = await controller.signUp(mockUser);
       expect(createSpy).toHaveBeenCalledWith(mockUser);
-      expect(mockResponse).toEqual(response);
+      expect(mockResponseCreated).toEqual(response);
+    });
+  });
+
+  describe('signIn()', () => {
+    it('should signIn a User', async () => {
+      const createSpy = jest.spyOn(service, 'signIn');
+
+      const response = await controller.signIn(mockSignIn);
+      expect(createSpy).toHaveBeenCalledWith(mockSignIn);
+      expect(mockResponseOk).toEqual(response);
     });
   });
 });

@@ -39,7 +39,6 @@ export class AuthService {
     let status: HttpStatus = HttpStatus.UNAUTHORIZED;
     let message: string = 'Incorrect Email or Password';
     let accessToken: string = '';
-
     if (user) {
       const isMatch = await bcrypt.compare(
         signInUserDto.password,
